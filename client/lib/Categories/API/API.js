@@ -20,7 +20,7 @@ export default {
   /**
    * Executes a REST request.
    *
-   * @param {obj} requestParams 
+   * @param {obj} requestParams
    */
   restRequest(requestParams) {
     const pathArray = requestParams.url.split('/');
@@ -40,18 +40,17 @@ export default {
           accessKeyId: awsCredentials.accessKeyId,
           sessionToken: awsCredentials.sessionToken,
         });
-
       signedRequest.data = signedRequest.body;
       delete signedRequest.body;
       delete signedRequest.headers['Host'];
       delete signedRequest.headers['Content-Length'];
-
-      return axios(signedRequest)
-        .then(response => response.data)
-        .catch((error) => {
-          console.log(error.response.data);
-          throw error;
-        });
+      console.log(signedRequest);
+        return axios(signedRequest)
+          .then(response => response.data)
+          .catch((error) => {
+            console.log(error.response.data);
+            throw error;
+          });
     }
 
     const unsignedRequest = newRequestParams.url;

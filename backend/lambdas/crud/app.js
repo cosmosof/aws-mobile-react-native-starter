@@ -82,6 +82,88 @@ app.post('/items/pets', (req, res) => {
   });
 });
 
+app.delete('/items/pets/:petId', (req, res) => {
+  if (!req.params.petId) {
+    res.status(400).json({
+      message: 'You must specify a pet id',
+    }).end();
+    return;
+  }
+
+  const userId = req.apiGateway.event.requestContext.identity.cognitoIdentityId;
+
+  dynamoDb.delete({
+    TableName: PETS_TABLE_NAME,
+    Key: {
+      userId: userId,
+      petId: req.params.petId,
+    },
+  }, (err, data) => {
+    if (err) {
+      console.log(err)
+      res.status(500).json({
+        message: 'Could not delete pet'
+      }).end();
+    } else {
+      res.json(null);
+    }
+  });
+});
+
+app.put('/items/pets:petId', (req, res) => {
+  if (req.body.name) {
+    res.status(400).json({
+      message: 'You must specify a pet name',
+    }).end();
+    return;
+  }
+
+  const pet = Object.assign({}, req.body);
+
+  pet.userId = req.apiGateway.event.requestContext.identity.cognitoIdentityId || UNAUTH;
+  pet.petId = uuid.v1();
+
+  dynamoDb.put({
+      TableName: PETS_TABLE_NAME,
+        Key: {
+            "userId": {"S": pet.userId},
+            "petId": {"S": pet.petId},
+        },
+
+        UpdateExpression: "SET #nm = :nnnn, #ht = :hhhh, #wt = :wwww, #al = :aaaa, #db = :dddd, #gd = :gggg, #pk = :pppp",
+        ExpressionAttributeNames:{
+            "#nm": "name",
+            "#ht": "height",
+            "#wt": "weight",
+            "#al": "activityLevel",
+            "#db": "dob",
+            "#gd": "gender",
+            "#pk": "picKey",
+        },
+        ExpressionAttributeValues:{
+        ":nnnn": {"S": pet.name },
+        ":hhhh": {"S": pet.height },
+        ":wwww": {"S": pet.weight },
+        ":aaaa": {"S": pet.activityLevel },
+        ":dddd": {"S": pet.dob },
+        ":gggg": {"S": pet.gender },
+        ":pppp": {"S": pet.picKey },
+        },
+
+    }, (err, data) => {
+      if (err) {
+        res.status(500).json({
+          message: 'Could not update pet'
+        }).end();
+      } else {
+        res.json(null);
+      }
+    });
+  });
+
+
+
+
 app.listen(3000, function () {
   console.log('App started');
 });

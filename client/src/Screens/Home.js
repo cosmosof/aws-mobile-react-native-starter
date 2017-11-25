@@ -30,10 +30,14 @@ import Storage from '../../lib/Categories/Storage';
 import API from '../../lib/Categories/API';
 import AddPet from './AddPet';
 import ViewPet from './ViewPet';
+import EditProfile from './EditProfile';
 import UploadPhoto from '../Components/UploadPhoto';
 import SideMenuIcon from '../Components/SideMenuIcon';
 import awsmobile from '../../aws-exports';
 import { colors } from 'theme';
+import { Card, CardSection } from '../Components/Common';
+import { calorieCal } from '../Actions/CalFunctions';
+
 
 let styles = {};
 
@@ -101,9 +105,21 @@ class Home extends React.Component {
   }
 
   renderPet(pet, index) {
+    const dob = new Date(pet.dob);
+    const years = new Date().getFullYear() - dob.getFullYear();
+
+    let cal = calorieCal(
+      pet.gender,
+      pet.weight,
+      pet.height,
+      years,
+      pet.activityLevel
+    );
     const uri = pet.picKey ? Storage.getObjectUrl(pet.picKey) : null;
 
     return (
+      <Card>
+
       <TouchableHighlight
         onPress={() => {
           this.props.navigation.navigate('ViewPet', { pet })
@@ -117,9 +133,22 @@ class Home extends React.Component {
             source={uri ? { uri } : require('../../assets/images/profileicon.png')}
             style={styles.petInfoAvatar}
           />
-          <Text style={styles.petInfoName}>{pet.name}</Text>
+          <View style={{flexDirection: 'column'}}>
+            <Text style={styles.petInfoName}>{pet.name}</Text>
+            <Text style={styles.calNeeds}>{'Daily Calorie needs : ' + cal}</Text>
+          </View>
+          <View style={{flex:1, alignItems: 'flex-end', marginRight: 10}}>
+          <Icon
+            name='ios-settings-outline'
+            type='ionicon'
+            color= {colors.darkGray}
+          />
+          </View>
+
         </View>
       </TouchableHighlight>
+      </Card>
+
     )
   }
 
@@ -145,15 +174,20 @@ class Home extends React.Component {
             name='add'
             size={44}
             containerStyle={{ width: 50, height: 50 }}
-            color={colors.primary}
+            color={colors.darkGray}
           />
         </View>}
         <ScrollView style={[{ flex: 1, zIndex: 0 }]} contentContainerStyle={[loading && { justifyContent: 'center', alignItems: 'center' }]}>
           {loading && <Animated.View style={{ transform: [{ rotate: spin }] }}><Icon name='autorenew' color={colors.grayIcon} /></Animated.View>}
           {
             !loading &&
-            <View style={styles.container}>
-              <Text style={styles.title}>My Pets</Text>
+            <View style={styles.titleContainer}>
+              <View style={{flexDirection: 'row'}}>
+                <Text style={styles.title}>PROFILES</Text>
+                <Text style={styles.titleInfo}>Add yourself and others you care!</Text>
+              </View>
+
+
               {
                 apiResponse.map((pet, index) => this.renderPet(pet, index))
               }
@@ -174,28 +208,51 @@ class Home extends React.Component {
 };
 
 styles = StyleSheet.create({
-  container: {
-    padding: 25,
+  titleContainer: {
+    marginRight: 5,
+  },
+  titleInfo: {
+    marginLeft: 5,
+    fontSize: 14,
+    color: colors.darkGray,
+    flex: 3,
+    marginBottom: 28,
+    marginTop: 42,
+    marginRight: 10,
   },
   title: {
-    color: colors.darkGray,
-    fontSize: 18,
-    marginBottom: 15,
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 30,
+    marginTop: 40,
+    marginLeft: 10,
+    color: '#2b2f32',
+    letterSpacing: 1,
+    flex: 2,
   },
   petInfoContainer: {
     marginVertical: 10,
     flexDirection: 'row',
     alignItems: 'center',
+    color: colors.darkGray,
+    flexDirection: 'row',
+
   },
   petInfoName: {
-    color: colors.darkGray,
-    fontSize: 20,
-    marginLeft: 17
+    color: '#2b2f32',
+    fontSize: 16,
+    marginLeft: 17,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  calNeeds: {
+    marginLeft: 17,
   },
   petInfoAvatar: {
     width: 50,
     height: 50,
     borderRadius: 25,
+    marginLeft: 5,
   }
 })
 
@@ -214,7 +271,10 @@ const HomeRouteStack = {
       }
     }
   },
-  ViewPet: { screen: ViewPet }
+  ViewPet: { screen: ViewPet },
+  EditProfile: { screen: EditProfile },
+  UploadPhoto: { screen: UploadPhoto },
+
 };
 
 const HomeNav = StackNavigator(HomeRouteStack);

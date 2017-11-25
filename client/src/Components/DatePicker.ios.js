@@ -60,7 +60,7 @@ export default class DatePicker extends React.Component {
         autoCorrect={false}
         underlineColorAndroid="transparent"
         editable={true}
-        placeholder="mm/dd/yyyy"
+        placeholder="dd/mm/yyyy"
         onFocus={() => this.setState({ pickerVisible: true, date: this.props.value || new Date() })}
         value={this.props.value && `${this.props.value.getMonth() + 1}/${this.props.value.getDate()}/${this.props.value.getFullYear()}`}
       />

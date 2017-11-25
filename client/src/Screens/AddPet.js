@@ -29,21 +29,23 @@ import {
   FormLabel,
   FormInput,
   FormValidationMessage,
-  Button,
+  Button as Btn,
   Icon,
   ButtonGroup,
 } from 'react-native-elements';
 import RNFetchBlob from 'react-native-fetch-blob';
 import uuid from 'react-native-uuid';
 import mime from 'mime-types';
-
 import { colors } from 'theme';
+import Button from 'react-native-button';
+import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 import Auth from '../../lib/Categories/Auth';
 import API from '../../lib/Categories/API';
 import Storage from '../../lib/Categories/Storage';
 import files from '../Utils/files';
 import awsmobile from '../../aws-exports';
 import DatePicker from '../Components/DatePicker';
+import RadioButtonL from '../Components/RadioButtonL';
 
 const { width, height } = Dimensions.get('window');
 
@@ -51,7 +53,7 @@ let styles = {};
 
 class AddPet extends React.Component {
   static navigationOptions = {
-    title: 'Add Pet',
+    title: 'Add Profile',
   }
 
   state = {
@@ -60,11 +62,16 @@ class AddPet extends React.Component {
     images: [],
     selectedGenderIndex: null,
     modalVisible: false,
+    types2: [{label: 'Sedentary', value: 0}, {label: 'Lightly Active', value: 1}, {label: '  Active  ', value: 2}, {label: 'Very Active', value: 3},],
+    value2: 0,
+    value2Index: 0,
     input: {
       name: '',
       dob: null,
-      breed: '',
+      height: '',
+      weight: '',
       gender: '',
+      activityLevel: 'Sedentary',
     },
     showActivityIndicator: false,
   }
@@ -92,10 +99,30 @@ class AddPet extends React.Component {
     }))
   }
 
+  updateActivity = (index) => {
+    let activityLevel = 'Sedentary';
+    if (index === 1) {
+      activityLevel = 'LightlyActive';
+    }
+    else if(index === 2) {
+      activityLevel = 'Active';
+    }
+    else if(index === 3) {
+      activityLevel = 'VeryActive';
+    }
+    this.setState((state) => ({
+      input: {
+        ...state.input,
+        activityLevel,
+      }
+    }))
+  }
+
+
   getPhotos = () => {
     CameraRoll
       .getPhotos({
-        first: 20,
+        first: 2,
       })
       .then(res => {
         this.setState({ images: res.edges })
@@ -158,6 +185,7 @@ class AddPet extends React.Component {
   }
 
   apiSavePet(pet) {
+    console.log(JSON.stringify(pet));
     const cloudLogicArray = JSON.parse(awsmobile.aws_cloud_logic_custom);
     const endPoint = cloudLogicArray[0].endpoint;
     const requestParams = {
@@ -166,7 +194,7 @@ class AddPet extends React.Component {
       headers: { 'content-type': 'application/json; charset=utf-8' },
       body: JSON.stringify(pet),
     }
-
+    
     return API.restRequest(requestParams);
   }
 
@@ -193,9 +221,10 @@ class AddPet extends React.Component {
     const { selectedImageIndex, selectedImage, selectedGenderIndex } = this.state;
 
     return (
+
       <View style={{ flex: 1, paddingBottom: 0 }}>
         <ScrollView style={{ flex: 1 }}>
-          <Text style={styles.title}>Add New Pet</Text>
+          <Text style={styles.title}>Add New Profile</Text>
           <TouchableWithoutFeedback
             onPress={this.getPhotos}
           >
@@ -222,7 +251,7 @@ class AddPet extends React.Component {
             autoCorrect={false}
             underlineColorAndroid="transparent"
             editable={true}
-            placeholder="Please enter you pet's name"
+            placeholder="Please enter a name for the profile"
             returnKeyType="next"
             ref="name"
             textInputRef="nameInput"
@@ -237,7 +266,7 @@ class AddPet extends React.Component {
             ref="datepicker"
             onDateChange={date => this.updateInput('dob', date)}>
           </DatePicker>
-          <FormLabel>Breed</FormLabel>
+          <FormLabel>Height</FormLabel>
           <FormInput
             inputStyle={styles.input}
             selectionColor={colors.primary}
@@ -245,13 +274,71 @@ class AddPet extends React.Component {
             autoCorrect={false}
             underlineColorAndroid="transparent"
             editable={true}
-            placeholder="Please enter your pet's breed"
+            maxLength={4}
+            keyboardType="numeric"
+            placeholder="Please enter profile's height"
             returnKeyType="next"
-            ref="breed"
-            textInputRef="breedInput"
-            onChangeText={(breed) => this.updateInput('breed', breed)}
-            value={this.state.input.breed}
+            ref="height"
+            textInputRef="heightInput"
+            onChangeText={(height) => this.updateInput('height', height)}
+            value={this.state.input.height}
           />
+          <FormLabel>Weight</FormLabel>
+          <FormInput
+            inputStyle={styles.input}
+            selectionColor={colors.primary}
+            autoCapitalize="none"
+            autoCorrect={false}
+            underlineColorAndroid="transparent"
+            editable={true}
+            maxLength={4}
+            keyboardType="numeric"
+            placeholder="Please enter profile's weight"
+            returnKeyType="next"
+            ref="weight"
+            textInputRef="weightInput"
+            onChangeText={(weight) => this.updateInput('weight', weight)}
+            value={this.state.input.weight}
+          />
+
+
+
+          <FormLabel>Pick An Activity Level</FormLabel>
+          <View style={styles.buttonGroupContainer}>
+          <View style={styles.component}>
+            <RadioForm
+              formHorizontal={true}
+              animation={true}
+
+            >
+
+              {this.state.types2.map((obj, i) => {
+                var that = this;
+                var is_selected = this.state.value2Index == i;
+                return (
+                  <View key={i} style={styles.radioButtonWrap}>
+                    <RadioButton
+                      isSelected={is_selected}
+                      obj={obj}
+                      index={i}
+                      labelHorizontal={false}
+                      buttonColor={'#6F7C8A'}
+                      labelColor={'#6F7C8A'}
+                      style={[i !== this.state.types2.length-1 && styles.radioStyle]}
+
+                      onPress={(value, index) => {
+                        this.setState({value2:value})
+                        this.setState({value2Index: index})
+                        this.updateActivity(index);
+                      }}
+                    />
+                  </View>
+                )
+              })}
+            </RadioForm>
+            <Text>selected: {this.state.types2[this.state.value2Index].label}</Text>
+          </View>
+          </View>
           <FormLabel>Gender</FormLabel>
           <View style={styles.buttonGroupContainer}>
             <ButtonGroup
@@ -265,12 +352,12 @@ class AddPet extends React.Component {
               buttons={['female', 'male']}
             />
           </View>
-          <Button
+          <Btn
             fontFamily='lato'
             containerViewStyle={{ marginTop: 20 }}
             backgroundColor={colors.primary}
             large
-            title="Add Pet"
+            title="Add Profile"
             onPress={this.AddPet}
           />
           <Text
@@ -287,6 +374,8 @@ class AddPet extends React.Component {
           />
         </Modal>
       </View>
+
+
     );
   }
 }
@@ -332,6 +421,35 @@ styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     flex: 1,
+  },
+  container: {
+    paddingTop: 20,
+    flex: 1,
+    alignItems: 'center',
+  },
+  welcome: {
+    fontSize: 20,
+    textAlign: 'center',
+    marginTop: 20,
+    marginBottom: 20,
+  },
+  instructions: {
+    textAlign: 'center',
+    color: '#333333',
+    marginBottom: 5,
+  },
+  component: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  radioStyle: {
+    borderRightWidth: 1,
+    borderColor: '#6F7C8A',
+    paddingRight: 10
+  },
+  radioButtonWrap: {
+    marginRight: 5,
+    paddingBottom: 10
   },
 });
 
