@@ -194,7 +194,7 @@ class AddPet extends React.Component {
       headers: { 'content-type': 'application/json; charset=utf-8' },
       body: JSON.stringify(pet),
     }
-    
+
     return API.restRequest(requestParams);
   }
 

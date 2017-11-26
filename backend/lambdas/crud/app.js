@@ -110,8 +110,8 @@ app.delete('/items/pets/:petId', (req, res) => {
   });
 });
 
-app.put('/items/pets:petId', (req, res) => {
-  if (req.body.name) {
+app.put('/items/pets/:petId', (req, res) => {
+  if (!req.body.name) {
     res.status(400).json({
       message: 'You must specify a pet name',
     }).end();
@@ -120,45 +120,43 @@ app.put('/items/pets:petId', (req, res) => {
 
   const pet = Object.assign({}, req.body);
 
+  Object.keys(pet).forEach(key => (pet[key] === '' && delete pet[key]));
+
   pet.userId = req.apiGateway.event.requestContext.identity.cognitoIdentityId || UNAUTH;
-  pet.petId = uuid.v1();
+  pet.petId = req.params.petId;
 
-  dynamoDb.put({
-      TableName: PETS_TABLE_NAME,
-        Key: {
-            "userId": {"S": pet.userId},
-            "petId": {"S": pet.petId},
-        },
-
-        UpdateExpression: "SET #nm = :nnnn, #ht = :hhhh, #wt = :wwww, #al = :aaaa, #db = :dddd, #gd = :gggg, #pk = :pppp",
-        ExpressionAttributeNames:{
-            "#nm": "name",
-            "#ht": "height",
-            "#wt": "weight",
-            "#al": "activityLevel",
-            "#db": "dob",
-            "#gd": "gender",
-            "#pk": "picKey",
-        },
-        ExpressionAttributeValues:{
-        ":nnnn": {"S": pet.name },
-        ":hhhh": {"S": pet.height },
-        ":wwww": {"S": pet.weight },
-        ":aaaa": {"S": pet.activityLevel },
-        ":dddd": {"S": pet.dob },
-        ":gggg": {"S": pet.gender },
-        ":pppp": {"S": pet.picKey },
-        },
-
-    }, (err, data) => {
-      if (err) {
-        res.status(500).json({
-          message: 'Could not update pet'
-        }).end();
-      } else {
-        res.json(null);
-      }
-    });
+  dynamoDb.update({
+    TableName: PETS_TABLE_NAME,
+    Key: {
+      userId: pet.userId,
+      petId: pet.petId,
+    },
+    UpdateExpression: "set #nm = :nnnn, #ht = :hhhh, #wt = :wwww, #al = :aaaa, #db = :dddd, #gd = :gggg",
+    ExpressionAttributeNames: {
+      "#nm": "name",
+      "#ht": "height",
+      "#wt": "weight",
+      "#al": "activityLevel",
+      "#db": "dob",
+      "#gd": "gender"
+    },
+    ExpressionAttributeValues: {
+      ":nnnn": pet.name,
+      ":hhhh": pet.height,
+      ":wwww": pet.weight,
+      ":aaaa": pet.activityLevel,
+      ":dddd": pet.dob,
+      ":gggg": pet.gender
+    },
+  }, (err, data) => {
+    if (err) {
+      res.status(500).json({
+        message: 'Could not update pet'
+      }).end();
+    } else {
+      res.json(null);
+    }
+  });
   });
 
 
