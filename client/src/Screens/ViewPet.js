@@ -75,7 +75,29 @@ class ViewPet extends React.Component {
     }
     return this.setState({ textWarning: false });
   };
-
+  profilePicture = () => {
+    const { pet } = this.props.navigation.state.params;
+    const uri = pet.picKey&&pet.picKey !== 'useIcon'? Storage.getObjectUrl(pet.picKey) : null;
+    if ( pet.gender === 'male'){
+      return (
+        <Image
+          style={styles.image}
+          source={
+            uri ? { uri } : require('../../assets/images/maleProfile.png')
+          }
+        />
+      );
+    } else {
+      return (
+        <Image
+          style={styles.image}
+          source={
+            uri ? { uri } : require('../../assets/images/femaleProfile.png')
+          }
+        />
+      );
+    }
+  }
   render() {
     const EditProfileRoutes = StackNavigator({
       EditProfile: { screen: EditProfile },
@@ -92,7 +114,6 @@ class ViewPet extends React.Component {
       pet.activityLevel
     );
 
-    const uri = pet.picKey ? Storage.getObjectUrl(pet.picKey) : null;
 
     const birthDay = `${years} years old, ${dob.getMonth() +
       1}/${dob.getDate()}/${dob.getFullYear()}`;
@@ -104,12 +125,7 @@ class ViewPet extends React.Component {
           <View style={styles.container}>
             <View style={styles.topContainer}>
               <View style={{flexDirection: 'column'}}>
-                <Image
-                  style={styles.image}
-                  source={
-                    uri ? { uri } : require('../../assets/images/profileicon.png')
-                  }
-                />
+                {this.profilePicture()}
                 <Text style={styles.title}>{pet.name}</Text>
                 <View style={{flex:1, alignItems: 'center', marginRight: 10}}>
                 <Icon
@@ -264,7 +280,7 @@ class ViewPet extends React.Component {
           </View>
         </Card>
       </ScrollView>
-    
+
       </View>
     );
   }

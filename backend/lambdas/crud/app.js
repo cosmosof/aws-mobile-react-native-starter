@@ -131,14 +131,15 @@ app.put('/items/pets/:petId', (req, res) => {
       userId: pet.userId,
       petId: pet.petId,
     },
-    UpdateExpression: "set #nm = :nnnn, #ht = :hhhh, #wt = :wwww, #al = :aaaa, #db = :dddd, #gd = :gggg",
+    UpdateExpression: "set #nm = :nnnn, #ht = :hhhh, #wt = :wwww, #al = :aaaa, #db = :dddd, #gd = :gggg, #pk = :pppp",
     ExpressionAttributeNames: {
       "#nm": "name",
       "#ht": "height",
       "#wt": "weight",
       "#al": "activityLevel",
       "#db": "dob",
-      "#gd": "gender"
+      "#gd": "gender",
+      "#pk": "picKey"
     },
     ExpressionAttributeValues: {
       ":nnnn": pet.name,
@@ -146,7 +147,8 @@ app.put('/items/pets/:petId', (req, res) => {
       ":wwww": pet.weight,
       ":aaaa": pet.activityLevel,
       ":dddd": pet.dob,
-      ":gggg": pet.gender
+      ":gggg": pet.gender,
+      ":pppp": pet.picKey
     },
   }, (err, data) => {
     if (err) {

@@ -115,8 +115,26 @@ class Home extends React.Component {
       years,
       pet.activityLevel
     );
-    const uri = pet.picKey ? Storage.getObjectUrl(pet.picKey) : null;
-
+    profilePicture = () => {
+      const uri = pet.picKey&&pet.picKey !== 'useIcon'? Storage.getObjectUrl(pet.picKey) : null;
+      if ( pet.gender === 'male'){
+        return (
+          <Image
+            resizeMode='cover'
+            style={styles.petInfoAvatar}
+            source={uri ? { uri } : require('../../assets/images/maleProfile.png')}
+          />
+        );
+      } else {
+        return (
+          <Image
+            resizeMode='cover'
+            style={styles.petInfoAvatar}
+            source={uri ? { uri } : require('../../assets/images/femaleProfile.png')}
+          />
+        );
+      }
+    }
     return (
       <Card>
 
@@ -128,11 +146,7 @@ class Home extends React.Component {
         key={pet.petId}
       >
         <View style={styles.petInfoContainer}>
-          <Image
-            resizeMode='cover'
-            source={uri ? { uri } : require('../../assets/images/profileicon.png')}
-            style={styles.petInfoAvatar}
-          />
+          {profilePicture()}
           <View style={{flexDirection: 'column'}}>
             <Text style={styles.petInfoName}>{pet.name}</Text>
             <Text style={styles.calNeeds}>{'Daily Calorie needs : ' + cal}</Text>
