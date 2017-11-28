@@ -13,7 +13,7 @@
 import React from 'react';
 import Slider from 'react-native-slider';
 import { View, Text, StyleSheet, Image, ScrollView, Modal, Animated, Easing,
-TouchableHighlight, } from 'react-native';
+TouchableHighlight, TouchableWithoutFeedback, } from 'react-native';
 import Communications from 'react-native-communications';
 import { colors } from 'theme';
 import EditProfile from './EditProfile';
@@ -27,7 +27,7 @@ import { DrawerNavigator, NavigationActions, StackNavigator } from 'react-naviga
 class ViewPet extends React.Component {
   static navigationOptions = ({ navigation, screenProps }) =>
     console.log(screenProps) || {
-      title: `Viewing ${navigation.state.params.pet.name}`
+      title: navigation.state.params.pet.name
     };
 
   constructor(props) {
@@ -128,17 +128,18 @@ class ViewPet extends React.Component {
                 {this.profilePicture()}
                 <Text style={styles.title}>{pet.name}</Text>
                 <View style={{flex:1, alignItems: 'center', marginRight: 10}}>
-                <Icon
-                  name='ios-settings-outline'
-                  type='ionicon'
-                  color= {colors.darkGray}
-                  onPress={() => {
+                  <TouchableWithoutFeedback onPress={() => {
                     console.log("pressed")
                     this.props.navigation.navigate('EditProfile', { pet })
                     }
-                  }
+                  }>
+                    <Image
+                      style={styles.settingicon}
+                      source={require('../../assets/images/Switchers.png')}
+                    />
 
-                />
+                  </TouchableWithoutFeedback>
+
                 </View>
               </View>
 
@@ -356,6 +357,10 @@ const styles = StyleSheet.create({
   },
   textRed: {
     color: '#F16B7A',
+  },
+  settingicon: {
+    width: 50,
+    height: 50,
   },
 });
 
