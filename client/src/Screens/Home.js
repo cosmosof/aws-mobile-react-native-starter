@@ -152,10 +152,9 @@ class Home extends React.Component {
             <Text style={styles.calNeeds}>{'Daily Calorie needs : ' + cal}</Text>
           </View>
           <View style={{flex:1, alignItems: 'flex-end', marginRight: 10}}>
-          <Icon
-            name='ios-settings-outline'
-            type='ionicon'
-            color= {colors.darkGray}
+          <Image
+            style={styles.settingicon}
+            source={require('../../assets/images/Switchers.png')}
           />
           </View>
 
@@ -267,6 +266,10 @@ styles = StyleSheet.create({
     height: 50,
     borderRadius: 25,
     marginLeft: 5,
+  },
+  settingicon:{
+    width: 50,
+    height: 50,
   }
 })
 
