@@ -114,7 +114,8 @@ class ViewPet extends React.Component {
       pet.activityLevel
     );
 
-
+    const DOB = `${dob.getMonth() +
+      1}/${dob.getDate()}/${dob.getFullYear()}`;
     const birthDay = `${years} years old, ${dob.getMonth() +
       1}/${dob.getDate()}/${dob.getFullYear()}`;
 
@@ -122,51 +123,103 @@ class ViewPet extends React.Component {
       <View>
       <ScrollView>
         <Card>
-          <View style={styles.container}>
-            <View style={styles.topContainer}>
-              <View style={{flexDirection: 'column'}}>
-                {this.profilePicture()}
-                <Text style={styles.title}>{pet.name}</Text>
-                <View style={{flex:1, alignItems: 'center', marginRight: 10}}>
-                  <TouchableWithoutFeedback onPress={() => {
-                    console.log("pressed")
-                    this.props.navigation.navigate('EditProfile', { pet })
+          <View style={styles.topContainer}>
+            <View style={styles.leftTopContainer}>
+              {this.profilePicture()}
+              <Text style={styles.title}>{pet.name}</Text>
+              <View style={{flex:1, alignItems: 'center', marginRight: 10}}>
+                <TouchableWithoutFeedback onPress={() => {
+                      this.props.navigation.navigate('EditProfile', { pet })
                     }
-                  }>
-                    <Image
-                      style={styles.settingicon}
-                      source={require('../../assets/images/Switchers.png')}
+                  }
+                >
+                  <Image
+                    style={styles.settingicon}
+                    source={require('../../assets/images/Switchers.png')}
                     />
-
-                  </TouchableWithoutFeedback>
-
-                </View>
-              </View>
-
-              <View style={styles.infoContainer}>
-                <Text style={styles.info}>{'Height : ' + pet.height}</Text>
-                <Text style={styles.info2}>{'Weight : ' + pet.weight}</Text>
-                <Text style={styles.info}>{'DOB : ' + birthDay}</Text>
-                <Text style={styles.info2}>{'Gender : ' + pet.gender}</Text>
-                <Text style={styles.info}>
-                  {'Activity Level : ' + pet.activityLevel}
-                </Text>
-                <Text style={styles.info2}>{'Calorie needs : ' + cal}</Text>
+                </TouchableWithoutFeedback>
               </View>
             </View>
-
+            <View style={styles.rightTopContainer}>
+            <View style={styles.medColorList}>
+              <View style={{flex:3}}>
+                <Text style={styles.infoTitle}>{'Height'}</Text>
+              </View>
+              <View style={{flex:1}}>
+                <Text style={styles.infoTitle}>{':'}</Text>
+              </View>
+              <View style={{flex:4}}>
+                <Text style={styles.info}>{pet.height}</Text>
+              </View>
+            </View>
+            <View style={styles.lightColorList}>
+              <View style={{flex:3}}>
+                <Text style={styles.infoTitle}>{'Weight'}</Text>
+              </View>
+              <View style={{flex:1}}>
+                <Text style={styles.infoTitle}>{':'}</Text>
+              </View>
+              <View style={{flex:4}}>
+                <Text style={styles.info}>{pet.weight}</Text>
+              </View>
+            </View>
+            <View style={styles.medColorList}>
+              <View style={{flex:3}}>
+                <Text style={styles.infoTitle}>{'DOB'}</Text>
+              </View>
+              <View style={{flex:1}}>
+                <Text style={styles.infoTitle}>{':'}</Text>
+              </View>
+              <View style={{flex:4}}>
+                <Text style={styles.info}>{DOB}</Text>
+              </View>
+            </View>
+            <View style={styles.lightColorList}>
+              <View style={{flex:3}}>
+                <Text style={styles.infoTitle}>{'Gender'}</Text>
+              </View>
+              <View style={{flex:1}}>
+                <Text style={styles.infoTitle}>{':'}</Text>
+              </View>
+              <View style={{flex:4}}>
+                <Text style={styles.info}>{pet.gender}</Text>
+              </View>
+            </View>
+            <View style={styles.medColorList}>
+              <View style={{flex:3}}>
+                <Text style={styles.infoTitle}>{'Activity Level'}</Text>
+              </View>
+              <View style={{flex:1}}>
+                <Text style={styles.infoTitle}>{':'}</Text>
+              </View>
+              <View style={{flex:4}}>
+                <Text style={styles.info}>{pet.activityLevel}</Text>
+              </View>
+            </View>
+            <View style={styles.lightColorList}>
+              <View style={{flex:3}}>
+                <Text style={styles.infoTitle}>{'Calorie needs'}</Text>
+              </View>
+              <View style={{flex:1}}>
+                <Text style={styles.infoTitle}>{':'}</Text>
+              </View>
+              <View style={{flex:4}}>
+                <Text style={styles.info}>{cal}</Text>
+              </View>
+            </View>
+            </View>
           </View>
         </Card>
-
         <Card>
           <View style={styles.container}>
+           <View style={{flex: 1, flexDirection: 'column', alignSelf: 'center', maxWidth: 320}}>
             <Text>USDA-FDA Recommended Macro Intake Ratios</Text>
             <View
               style={{
                 flex: 1,
                 alignItems: 'stretch',
                 justifyContent: 'center',
-                marginTop: 15
+                marginTop: 15,
               }}
             >
               <Slider
@@ -279,6 +332,7 @@ class ViewPet extends React.Component {
               {this.distControl()}
             </View>
           </View>
+          </View>
         </Card>
       </ScrollView>
 
@@ -290,6 +344,36 @@ class ViewPet extends React.Component {
 
 const imageSize = 100;
 const styles = StyleSheet.create({
+  medColorList: {
+    flexDirection: 'row',
+    backgroundColor: '#F9F7EF',
+    flex: 1,
+    maxWidth: 160,
+    alignItems: 'center',
+  },
+  lightColorList: {
+    flexDirection: 'row',
+    backgroundColor: '#FFFCFC',
+    flex: 1,
+    maxWidth: 160,
+    alignItems: 'center',
+  },
+  topContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignSelf: 'center',
+    maxWidth: 320,
+    marginTop: 20,
+    marginBottom: 20,
+  },
+  rightTopContainer: {
+    flex:0.5,
+    alignItems:'center',
+  },
+  leftTopContainer: {
+    flex:0.5,
+    alignItems:'center',
+  },
   track: {
     height: 14,
     borderRadius: 2,
@@ -305,11 +389,10 @@ const styles = StyleSheet.create({
     borderColor: '#9a9a9a',
     borderWidth: 1,
   },
-  infoContainer: {
+  rightContainer: {
     paddingLeft: 20,
     justifyContent: 'center',
     flexDirection: 'column',
-
   },
   breaker: {
     height: 1,
@@ -317,8 +400,9 @@ const styles = StyleSheet.create({
     marginVertical: 15,
     width: '100%',
   },
-  topContainer: {
+  leftContainer: {
     flexDirection: 'row',
+    justifyContent: 'center',
   },
   container: {
     padding: 20,
@@ -327,6 +411,12 @@ const styles = StyleSheet.create({
     width: imageSize,
     height: imageSize,
     borderRadius: imageSize / 2,
+    borderWidth: 1,
+    borderColor: '#ddd',
+		shadowColor: '#000',
+		shadowOffset: { width: 0, height: 2 },
+		shadowOpacity: 0.1,
+		shadowRadius: 2,
   },
   title: {
     marginBottom: 20,
@@ -338,7 +428,15 @@ const styles = StyleSheet.create({
   },
   info: {
     color: colors.darkGray,
-    backgroundColor: '#FFFCFC',
+    paddingLeft: 5,
+    paddingRight: 5,
+    paddingTop: 10,
+    paddingBottom: 10,
+    fontSize: 12,
+  },
+  infoTitle: {
+    fontWeight: 'bold',
+    fontSize: 12,
     paddingLeft: 5,
     paddingRight: 5,
     paddingTop: 10,

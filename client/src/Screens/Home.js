@@ -136,14 +136,13 @@ class Home extends React.Component {
       }
     }
     return (
-      <Card>
+      <Card key={pet.petId}>
 
       <TouchableHighlight
         onPress={() => {
           this.props.navigation.navigate('ViewPet', { pet })
         }}
         underlayColor='transparent'
-        key={pet.petId}
       >
         <View style={styles.petInfoContainer}>
           {profilePicture()}
@@ -244,10 +243,9 @@ styles = StyleSheet.create({
     flex: 2,
   },
   petInfoContainer: {
-    marginVertical: 10,
+    marginVertical: 5,
     flexDirection: 'row',
     alignItems: 'center',
-    color: colors.darkGray,
     flexDirection: 'row',
 
   },
