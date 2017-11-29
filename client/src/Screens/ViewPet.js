@@ -48,7 +48,7 @@ class ViewPet extends React.Component {
     }
     this.setState((state) => ({ modalVisible: !state.modalVisible }));
   }
-  distControl = () => {
+  distControl1 = () => {
     if (
       Math.round(this.state.carbDist * 100) +
         Math.round(this.state.protDist * 100) +
@@ -56,8 +56,23 @@ class ViewPet extends React.Component {
       100
     ) {
       return (
-        <Text style={{ color: '#F16B7A', textAlign: 'center' }}>
-          Make sure 'Percentage Total is 100'!
+        <Text style={styles.distControl1}>
+          Make sure this
+        </Text>
+      );
+    }
+    return <Text />;
+  };
+  distControl2 = () => {
+    if (
+      Math.round(this.state.carbDist * 100) +
+        Math.round(this.state.protDist * 100) +
+        Math.round(this.state.fatDist * 100) !=
+      100
+    ) {
+      return (
+        <Text style={styles.distControl2}>
+          add up to 100 %
         </Text>
       );
     }
@@ -212,7 +227,7 @@ class ViewPet extends React.Component {
         </Card>
         <Card>
           <View style={styles.container}>
-           <View style={{flex: 1, flexDirection: 'column', alignSelf: 'center', maxWidth: 320}}>
+           <View style={{flex: 1, flexDirection: 'column', alignSelf: 'center', maxWidth: 360}}>
             <Text>USDA-FDA Recommended Macro Intake Ratios</Text>
             <View
               style={{
@@ -222,6 +237,20 @@ class ViewPet extends React.Component {
                 marginTop: 15,
               }}
             >
+
+            <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+              <View>
+                {this.distControl1()}
+              </View>
+              <View >
+                <Text style={this.state.textWarning && styles.textRed}>{Math.round(this.state.carbDist*100) + Math.round(this.state.protDist*100) + Math.round(this.state.fatDist*100)} %
+                </Text>
+              </View>
+              <View>
+                {this.distControl2()}
+              </View>
+            </View>
+
               <Slider
                 trackStyle={styles.track}
                 thumbStyle={styles.thumb}
@@ -238,14 +267,14 @@ class ViewPet extends React.Component {
                 </Text>
                 <Text
                   style={[
-                    styles.flex1,
+                    styles.flex2,
                     this.state.textWarning && styles.textRed
                   ]}
                 >
                   {Math.round(this.state.carbDist * 100)} %{' '}
                 </Text>
                 <Text
-                  style={{ flex: 1, textAlign: 'right', fontWeight: 'bold' }}
+                  style={{ flex: 2, textAlign: 'right', fontWeight: 'bold' }}
                 >
                   {Math.round(cal * this.state.carbDist / 4) + ' gram'}
                 </Text>
@@ -259,6 +288,7 @@ class ViewPet extends React.Component {
                 marginTop: 15
               }}
             >
+
               <Slider
                 trackStyle={styles.track}
                 thumbStyle={styles.thumb}
@@ -273,14 +303,14 @@ class ViewPet extends React.Component {
                 <Text style={{ flex: 2, textAlign: 'left' }}>Proteins</Text>
                 <Text
                   style={[
-                    styles.flex1,
+                    styles.flex2,
                     this.state.textWarning && styles.textRed
                   ]}
                 >
                   {Math.round(this.state.protDist * 100)} %{' '}
                 </Text>
                 <Text
-                  style={{ flex: 1, textAlign: 'right', fontWeight: 'bold' }}
+                  style={{ flex: 2, textAlign: 'right', fontWeight: 'bold' }}
                 >
                   {Math.round(cal * this.state.protDist / 4) + ' gram'}
                 </Text>
@@ -308,29 +338,20 @@ class ViewPet extends React.Component {
                 <Text style={{ flex: 2, textAlign: 'left' }}>Fats</Text>
                 <Text
                   style={[
-                    styles.flex1,
+                    styles.flex2,
                     this.state.textWarning && styles.textRed
                   ]}
                 >
                   {Math.round(this.state.fatDist * 100)} %{' '}
                 </Text>
                 <Text
-                  style={{ flex: 1, textAlign: 'right', fontWeight: 'bold' }}
+                  style={{ flex: 2, textAlign: 'right', fontWeight: 'bold' }}
                 >
                   {Math.round(cal * this.state.fatDist / 4) + ' gram'}
                 </Text>
               </View>
             </View>
-            <View
-              style={{
-                flex: 1,
-                alignItems: 'stretch',
-                justifyContent: 'center',
-                marginTop: 15
-              }}
-            >
-              {this.distControl()}
-            </View>
+
           </View>
           </View>
         </Card>
@@ -344,35 +365,53 @@ class ViewPet extends React.Component {
 
 const imageSize = 100;
 const styles = StyleSheet.create({
+  distControl1: {
+    color: '#F16B7A',
+    textAlign: 'right',
+    fontSize: 10,
+    fontWeight: 'bold',
+    marginRight: 5,
+    marginTop: 3
+  },
+  distControl2: {
+    color: '#F16B7A',
+    textAlign: 'left',
+    fontSize: 10,
+    fontWeight: 'bold',
+    marginLeft: 5,
+    marginTop: 3
+  },
   medColorList: {
     flexDirection: 'row',
     backgroundColor: '#F9F7EF',
     flex: 1,
-    maxWidth: 160,
+    maxWidth: 180,
     alignItems: 'center',
   },
   lightColorList: {
     flexDirection: 'row',
     backgroundColor: '#FFFCFC',
     flex: 1,
-    maxWidth: 160,
+    maxWidth: 180,
     alignItems: 'center',
   },
   topContainer: {
     flex: 1,
     flexDirection: 'row',
     alignSelf: 'center',
-    maxWidth: 320,
+    maxWidth: 360,
     marginTop: 20,
     marginBottom: 20,
   },
   rightTopContainer: {
     flex:0.5,
     alignItems:'center',
+    marginRight: 10,
   },
   leftTopContainer: {
     flex:0.5,
     alignItems:'center',
+    marginLeft: 10,
   },
   track: {
     height: 14,
@@ -449,6 +488,10 @@ const styles = StyleSheet.create({
     paddingRight: 5,
     paddingTop: 10,
     paddingBottom: 10,
+  },
+  flex2: {
+    flex: 2,
+    textAlign: 'center',
   },
   flex1: {
     flex: 1,
